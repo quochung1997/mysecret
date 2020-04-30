@@ -14,10 +14,10 @@ const Subscription = new Schema({
         type: Date,
         default: Date.now
     },
-    ownderAccountId: {
+    ownerAccountId: {
         type: String,
         required: true
     },
 });
 
-module.exports = mongoose.model('account', Subscription);
+module.exports = mongoose.model('subscription', Subscription);

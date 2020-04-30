@@ -10,6 +10,7 @@ mongoose.Promise = global.Promise;
 
 app.use(bodyParser.json());
 
-// app.use('/api/accounts', require('./routes/AccountRouter'));
+app.use('/api/account', require('./routes/AccountRouter'));
+app.use('/api/subscription', require('./routes/SubscriptionRouter'));
 
 app.listen(process.env.port || 8000, () => console.log("server started..."));
