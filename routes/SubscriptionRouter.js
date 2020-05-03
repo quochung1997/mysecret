@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const SubscriptionRepo = require('../repositories/SubscriptionRepo');
-const {verifyMiddleWare} = require('./JWTVerification')
+const { verifyMiddleWare } = require('./JWTVerification')
 
 router.get('/all', verifyMiddleWare, (req, res) => {
     SubscriptionRepo.getMany('').then(subsciptions => {
@@ -20,7 +20,15 @@ router.get('/search/:kw', verifyMiddleWare, (req, res) => {
 });
 
 router.get('/account/:id', verifyMiddleWare, (req, res) => {
-    SubscriptionRepo.getMany(req.params.id).then(subscriptions => {
+    SubscriptionRepo.getManyByAccount(req.params.id).then(subscriptions => {
+        res.send(subscriptions);
+    }, err => {
+        res.status(400).send(err);
+    });
+});
+
+router.get('/subscribes', verifyMiddleWare, (req, res) => {
+    SubscriptionRepo.getListSubscribes(req.params.listId).then(subscriptions => {
         res.send(subscriptions);
     }, err => {
         res.status(400).send(err);

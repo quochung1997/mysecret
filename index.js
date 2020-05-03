@@ -5,12 +5,13 @@ require('dotenv').config();
 
 const app = express();
 
-mongoose.connect(process.env.DB_URL, {useNewUrlParser: true});
+mongoose.connect(process.env.DB_URL, { useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 
 app.use(bodyParser.json());
 
 app.use('/api/account', require('./routes/AccountRouter'));
 app.use('/api/subscription', require('./routes/SubscriptionRouter'));
+app.use('/api/event', require('./routes/SubscriptionEventRouter'));
 
 app.listen(process.env.port || 8000, () => console.log("server started..."));

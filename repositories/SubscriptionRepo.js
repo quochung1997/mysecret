@@ -1,17 +1,21 @@
 const Subscription = require('../models/Subscription');
 
-module.exports.getMany = kw => new Promise( async (resolve, reject) => {
+module.exports.getMany = kw => new Promise(async (resolve, reject) => {
     try {
         const subscriptions = await Subscription.find({
             $or: [
-                {title: {
-                    $regex: kw,
-                    $options: 'i'
-                }},
-                {desciption: {
-                    $regex: kw,
-                    $options: 'i'
-                }},
+                {
+                    title: {
+                        $regex: kw,
+                        $options: 'i'
+                    }
+                },
+                {
+                    desciption: {
+                        $regex: kw,
+                        $options: 'i'
+                    }
+                },
             ]
         });
 
@@ -21,68 +25,68 @@ module.exports.getMany = kw => new Promise( async (resolve, reject) => {
     }
 });
 
-module.exports.getOne = _id => new Promise( async (resolve, reject) => {
+module.exports.getOne = _id => new Promise(async (resolve, reject) => {
     try {
-        const subscription = await Subscription.findOne({_id});
+        const subscription = await Subscription.findOne({ _id });
 
         if (subscription) {
             resolve(subscription);
         } else {
             reject("No Subscription found");
         }
-    } catch(err) {
+    } catch (err) {
         reject("Wrong id");
     }
 });
 
-module.exports.getManyByAccount = accountId => new Promise( async (resolve, reject) => {
+module.exports.getManyByAccount = accountId => new Promise(async (resolve, reject) => {
     try {
-        const subscriptions = await Subscription.find({ownerAccountId: accountId});
+        const subscriptions = await Subscription.find({ ownerAccountId: accountId });
 
         if (subscriptions) {
             resolve(subscriptions);
         } else {
             reject("No Subscription found");
         }
-    } catch(err) {
+    } catch (err) {
         reject("Wrong id");
     }
 });
 
-module.exports.getListSubscribes = listId => new Promise( async (resolve, reject) => {
+module.exports.getListSubscribes = listId => new Promise(async (resolve, reject) => {
     try {
         const query = listId.map(_id => {
-            return {_id}
+            return { _id }
         });
 
-        const subscriptions = await Subscription.find({$or: query});
+        const subscriptions = await Subscription.find({ $or: query });
 
         if (subscriptions) {
             resolve(subscriptions);
         } else {
             reject("No Subscription found");
         }
-    } catch(err) {
+    } catch (err) {
         reject("Wrong id");
     }
 });
 
-module.exports.createOne = (_id, subscription) => new Promise( async (resolve, reject) => {
+module.exports.createOne = (_id, subscription) => new Promise(async (resolve, reject) => {
     try {
         subscription.ownerAccountId = _id;
 
         const createdSubscription = await Subscription.create(subscription);
 
         return resolve(createdSubscription);
-            
-    } catch(err) {
+
+    } catch (err) {
         return reject("Can not create subscription");
     }
 });
 
-module.exports.update = (accountId, _id, data) => new Promise( async (resolve, reject) => {
+module.exports.update = (accountId, _id, data) => new Promise(async (resolve, reject) => {
     try {
-        const {ownerAccountId} = await Subscription.findById({_id});
+        const { ownerAccountId } = await Subscription.findById({ _id });
 
         if (ownerAccountId != accountId) {
             return reject("Permission denied");
@@ -92,7 +96,7 @@ module.exports.update = (accountId, _id, data) => new Promise( async (resolve, r
     }
 
     try {
-        const subscription = await Subscription.findOneAndUpdate({_id}, {$set: data}, {new: true});
+        const subscription = await Subscription.findOneAndUpdate({ _id }, { $set: data }, { new: true });
 
         return resolve(subscription);
     } catch (err) {
@@ -100,9 +104,9 @@ module.exports.update = (accountId, _id, data) => new Promise( async (resolve, r
     }
 });
 
-module.exports.remove = (accountId, _id) => new Promise( async (resolve, reject) => {
+module.exports.remove = (accountId, _id) => new Promise(async (resolve, reject) => {
     try {
-        const {ownerAccountId} = await Subscription.findById({_id});
+        const { ownerAccountId } = await Subscription.findById({ _id });
 
         if (ownerAccountId != accountId) {
             return reject("Permission denied");
@@ -112,7 +116,7 @@ module.exports.remove = (accountId, _id) => new Promise( async (resolve, reject)
     }
 
     try {
-        const subscription = await Subscription.findByIdAndRemove({_id});
+        const subscription = await Subscription.findByIdAndRemove({ _id });
         return resolve(subscription);
     } catch (err) {
         return reject("Can not delete");
