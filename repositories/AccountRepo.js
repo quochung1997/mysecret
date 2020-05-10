@@ -2,7 +2,7 @@ const Account = require('../models/Account');
 const bcrypt = require('bcrypt');
 const salt = 10;
 
-module.exports.getMany = kw => new Promise( async (resolve, reject) => {
+module.exports.getMany = kw => new Promise(async (resolve, reject) => {
     try {
         const accounts = await Account.find({
             $or: [
@@ -20,26 +20,26 @@ module.exports.getMany = kw => new Promise( async (resolve, reject) => {
 
 
         resolve(accounts);
-    } catch(err) {
+    } catch (err) {
         reject(err);
     }
 });
 
-module.exports.getOne = _id => new Promise( async (resolve, reject) => {
+module.exports.getOne = _id => new Promise(async (resolve, reject) => {
     try {
-        const account = await Account.findOne({_id}).select("-password");
+        const account = await Account.findOne({ _id }).select("-password");
 
         if (account) {
             resolve(account);
         } else {
             reject("No Account found");
         }
-    } catch(err) {
+    } catch (err) {
         reject("Wrong id");
     }
 });
 
-module.exports.register = account => new Promise( async (resolve, reject) => {
+module.exports.register = account => new Promise(async (resolve, reject) => {
     try {
         account.password = bcrypt.hashSync(account.password, salt);
         const createdAccount = await Account.create(account);
@@ -49,14 +49,14 @@ module.exports.register = account => new Promise( async (resolve, reject) => {
         } else {
             reject("Fail to create");
         }
-    } catch(err) {
+    } catch (err) {
         reject("Email has been taken");
     }
 });
 
-module.exports.login = (email, password) => new Promise( async (resolve, reject) => {
+module.exports.login = (email, password) => new Promise(async (resolve, reject) => {
     try {
-        const account = await Account.findOne({email});
+        const account = await Account.findOne({ email });
 
         if (account) {
             if (bcrypt.compareSync(password, account.password)) {
@@ -67,17 +67,17 @@ module.exports.login = (email, password) => new Promise( async (resolve, reject)
         } else {
             reject("Wrong email!");
         }
-    } catch(err) {
+    } catch (err) {
         reject(err);
     }
-    
+
 });
 
-module.exports.update = (_id, data) => new Promise( async (resolve, reject) => {
+module.exports.update = (_id, data) => new Promise(async (resolve, reject) => {
     try {
         if (data.password) {
             if (data.newPassword) {
-                const hashPassword = (await Account.findById({_id})).password;
+                const hashPassword = (await Account.findById({ _id })).password;
                 if (bcrypt.compareSync(data.password, hashPassword)) {
                     data.password = bcrypt.hashSync(data.newPassword, salt);
                 } else {
@@ -87,15 +87,15 @@ module.exports.update = (_id, data) => new Promise( async (resolve, reject) => {
                 return reject("Confirm password failed");
             }
         }
-        
-        const account = await Account.findOneAndUpdate({_id}, {$set: data}, {new: true});
+
+        const account = await Account.findOneAndUpdate({ _id }, { $set: data }, { new: true });
 
         if (account) {
             resolve(account);
         } else {
             reject("Can not find account");
         }
-    } catch(err) {
+    } catch (err) {
         reject(err);
     }
 });
